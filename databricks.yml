@@ -2,7 +2,7 @@ bundle:
   name: formula1-databricks
 
 include:
-  - resources/*.yml
+  - resources/jobs/*.yml
 
 targets:
   dev:
