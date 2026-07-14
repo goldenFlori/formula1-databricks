@@ -43,6 +43,7 @@ resources:
           job_cluster_key: Job_cluster
           timeout_seconds: 0
           email_notifications: {}
+          webhook_notifications: {}
           disabled: false
           notebook_task:
             notebook_path: ./formula1-project/03-silver/01.Transform Circuits Data
@@ -64,7 +65,96 @@ resources:
           job_cluster_key: Job_cluster
           timeout_seconds: 0
           email_notifications: {}
+          webhook_notifications: {}
           disabled: false
           notebook_task:
             notebook_path: ./formula1-project/03-silver/02.Transform Races Data
+            source: WORKSPACE
+        - task_key: 03_ingest_constructors_file
+          run_if: ALL_SUCCESS
+          job_cluster_key: Job_cluster
+          timeout_seconds: 0
+          email_notifications: {}
+          webhook_notifications: {}
+          disabled: false
+          notebook_task:
+            notebook_path: ./formula1-project/02-bronze/03.Ingest Constructors File
+            source: WORKSPACE
+        - task_key: 03_transform_constructors_data
+          depends_on:
+            - task_key: 03_ingest_constructors_file
+          run_if: ALL_SUCCESS
+          job_cluster_key: Job_cluster
+          timeout_seconds: 0
+          email_notifications: {}
+          webhook_notifications: {}
+          disabled: false
+          notebook_task:
+            notebook_path: ./formula1-project/03-silver/03.Transform Constructors Data
+            source: WORKSPACE
+        - task_key: 04_ingest_drivers_file
+          run_if: ALL_SUCCESS
+          job_cluster_key: Job_cluster
+          timeout_seconds: 0
+          email_notifications: {}
+          webhook_notifications: {}
+          disabled: false
+          notebook_task:
+            notebook_path: ./formula1-project/02-bronze/04.Ingest Drivers File
+            source: WORKSPACE
+        - task_key: 04_transform_drivers_data
+          depends_on:
+            - task_key: 04_ingest_drivers_file
+          run_if: ALL_SUCCESS
+          job_cluster_key: Job_cluster
+          timeout_seconds: 0
+          email_notifications: {}
+          webhook_notifications: {}
+          disabled: false
+          notebook_task:
+            notebook_path: ./formula1-project/03-silver/04.Transform Drivers Data
+            source: WORKSPACE
+        - task_key: 05_ingest_results_file
+          run_if: ALL_SUCCESS
+          job_cluster_key: Job_cluster
+          timeout_seconds: 0
+          email_notifications: {}
+          webhook_notifications: {}
+          disabled: false
+          notebook_task:
+            notebook_path: ./formula1-project/02-bronze/05.Ingest Results File
+            source: WORKSPACE
+        - task_key: 05_transform_results_data
+          depends_on:
+            - task_key: 05_ingest_results_file
+          run_if: ALL_SUCCESS
+          job_cluster_key: Job_cluster
+          timeout_seconds: 0
+          email_notifications: {}
+          webhook_notifications: {}
+          disabled: false
+          notebook_task:
+            notebook_path: ./formula1-project/03-silver/05.Transform Results Data
+            source: WORKSPACE
+        - task_key: 06_ingest_sprints_file
+          run_if: ALL_SUCCESS
+          job_cluster_key: Job_cluster
+          timeout_seconds: 0
+          email_notifications: {}
+          webhook_notifications: {}
+          disabled: false
+          notebook_task:
+            notebook_path: ./formula1-project/02-bronze/06.Ingest Sprints File
+            source: WORKSPACE
+        - task_key: 06_transform_sprints_data
+          depends_on:
+            - task_key: 06_ingest_sprints_file
+          run_if: ALL_SUCCESS
+          job_cluster_key: Job_cluster
+          timeout_seconds: 0
+          email_notifications: {}
+          webhook_notifications: {}
+          disabled: false
+          notebook_task:
+            notebook_path: ./formula1-project/03-silver/06.Transform Sprints Data
             source: WORKSPACE
