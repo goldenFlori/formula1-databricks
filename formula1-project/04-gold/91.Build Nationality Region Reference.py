@@ -14,6 +14,11 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Define target table
+target_table = f"{catalog_name}.{gold_schema}.ref_nationality_region"
+
+# COMMAND ----------
+
 # DBTITLE 1,Import helpers
 from pyspark.sql import Row
 
@@ -93,11 +98,6 @@ nationality_region = [
 
 # DBTITLE 1,Create dataframe
 ref_nationality_region_df = spark.createDataFrame(nationality_region)
-
-# COMMAND ----------
-
-# DBTITLE 1,Display dataframe
-display(ref_nationality_region_df)
 
 # COMMAND ----------
 
