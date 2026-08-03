@@ -1,0 +1,81 @@
+{
+  "dashboard_id": "01f18386cba21d28b3db627ebc906f2c",
+  "tree_node_id": "1207407104790633",
+  "display_name": "Formula1 Analytics Dashboard",
+  "source": "draft",
+  "original_path": "/Users/florjanimema@gmail.com/Formula1 Analytics Dashboard.lvdash.json",
+  "datasets": [
+    {
+      "name": "ccb3d649",
+      "displayName": "v_driver_standing",
+      "query": "",
+      "tables": [],
+      "cteExpressions": []
+    },
+    {
+      "name": "2e8594d2",
+      "displayName": "v_constructor_standing",
+      "query": "",
+      "tables": [],
+      "cteExpressions": []
+    },
+    {
+      "name": "0b175b29",
+      "displayName": "dominant_drivers",
+      "query": "WITH driver_metrics AS\n\n(\n\nSELECT driver_name,\n\n    SUM(race_starts) AS race_starts,\n\n    SUM(number_of_wins) AS total_wins,\n\n    SUM(number_of_podiums) AS total_podiums,\n\n    SUM(CASE WHEN standing = 1 THEN 1 ELSE 0 END) AS total_championships\n\nFROM formula1.gold.v_driver_standing\n\nGROUP BY driver_name\n\nHAVING total_championships>=1\n\n)\n\nSELECT driver_name,\n\nrace_starts,\n\ntotal_wins,\n\ntotal_podiums,\n\ntotal_championships,\n\n(total_championships*100)+(total_wins*10)+(total_podiums*3) AS greatness_score\n\nFROM driver_metrics\n\nORDER BY greatness_score DESC\n\nLIMIT 10",
+      "tables": ["formula1.gold.v_driver_standing"],
+      "cteExpressions": ["driver_metrics"]
+    },
+    {
+      "name": "f3dcb62b",
+      "displayName": "dominant_constructors",
+      "query": "WITH constructor_metrics AS\n\n(\n\nSELECT constructor_name,\n\n    SUM(race_starts) AS race_starts,\n\n    SUM(number_of_wins) AS total_wins,\n\n    SUM(number_of_podiums) AS total_podiums,\n\n    SUM(CASE WHEN standing = 1 THEN 1 ELSE 0 END) AS total_championships\n\nFROM formula1.gold.v_constructor_standing\n\nGROUP BY constructor_name\n\nHAVING total_championships>=1\n\n)\n\nSELECT constructor_name,\n\nrace_starts,\n\ntotal_wins,\n\ntotal_podiums,\n\ntotal_championships,\n\n(total_championships*100)+(total_wins*10)+(total_podiums*3) AS greatness_score\n\nFROM constructor_metrics\n\nORDER BY greatness_score DESC\n\nLIMIT 10",
+      "tables": ["formula1.gold.v_constructor_standing"],
+      "cteExpressions": ["constructor_metrics"]
+    }
+  ],
+  "pages": [
+    {
+      "name": "de00a1b2",
+      "displayName": "Driver Championship Standings",
+      "widgets": [
+        {"name": "18fd9f48", "title": "18fd9f48", "widgetType": "text", "datasetNames": []},
+        {"name": "driver-championship-standings", "title": "Driver Championship Standings", "widgetType": "table", "datasetNames": ["ccb3d649"]},
+        {"name": "season", "title": "Season", "widgetType": "filter-single-select", "datasetNames": ["ccb3d649"]},
+        {"name": "total", "title": "Total Points Scored By Driver", "widgetType": "bar", "datasetNames": ["ccb3d649"]},
+        {"name": "wins", "title": "Wins By Driver", "widgetType": "pie", "datasetNames": ["ccb3d649"]}
+      ]
+    },
+    {
+      "name": "1c7febf2",
+      "displayName": "Constructer Championship Standings",
+      "widgets": [
+        {"name": "27bbc533", "title": "27bbc533", "widgetType": "text", "datasetNames": []},
+        {"name": "90361e96", "title": "Constructor Championship Standings", "widgetType": "table", "datasetNames": ["2e8594d2"]},
+        {"name": "95f027ff", "title": "Season", "widgetType": "filter-single-select", "datasetNames": ["2e8594d2"]},
+        {"name": "c0c91210", "title": "Total Points Scored By Team", "widgetType": "bar", "datasetNames": ["2e8594d2"]},
+        {"name": "e8b15a12", "title": "Wins By Team", "widgetType": "pie", "datasetNames": ["2e8594d2"]}
+      ]
+    },
+    {
+      "name": "2a3c1933",
+      "displayName": "Dominant Drivers of All Time",
+      "widgets": [
+        {"name": "f339278a", "title": "f339278a", "widgetType": "text", "datasetNames": []},
+        {"name": "dominant", "title": "Dominant Drivers", "widgetType": "table", "datasetNames": ["0b175b29"]},
+        {"name": "886feebb", "title": "886feebb", "widgetType": "pie", "datasetNames": ["0b175b29"]},
+        {"name": "f-1", "title": "Greatness Score By Driver", "widgetType": "bar", "datasetNames": ["0b175b29"]}
+      ]
+    },
+    {
+      "name": "c03f0795",
+      "displayName": "Dominant Teams of All Time",
+      "widgets": [
+        {"name": "5f7d83a0", "title": "5f7d83a0", "widgetType": "text", "datasetNames": []},
+        {"name": "064bc164", "title": "Dominant Teams", "widgetType": "table", "datasetNames": ["f3dcb62b"]},
+        {"name": "2e4f4aaf", "title": "2e4f4aaf", "widgetType": "pie", "datasetNames": ["f3dcb62b"]},
+        {"name": "49ab1c84", "title": "Greatness Score By Team", "widgetType": "bar", "datasetNames": ["f3dcb62b"]}
+      ]
+    }
+  ]
+}
