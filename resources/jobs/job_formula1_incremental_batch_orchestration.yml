@@ -1,0 +1,73 @@
+resources:
+  jobs:
+    job_formula1_incremental_batch_orchestration:
+      name: job_formula1_incremental_batch_orchestration
+      email_notifications:
+        no_alert_for_skipped_runs: false
+      webhook_notifications: {}
+      timeout_seconds: 0
+      max_concurrent_runs: 1
+      format: MULTI_TASK
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
+      tasks:
+        - task_key: 01_Identify_Next_Batch
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          email_notifications: {}
+          webhook_notifications: {}
+          disabled: false
+          notebook_task:
+            notebook_path: ./formula1-project-incremental-load/06-orchestration/01.Identify Next Batch
+            source: WORKSPACE
+        - task_key: Is_There_A_Batch_To_Process
+          depends_on:
+            - task_key: 01_Identify_Next_Batch
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          email_notifications: {}
+          webhook_notifications: {}
+          disabled: false
+          condition_task:
+            left: '{{tasks.01_Identify_Next_Batch.values.has_batch}}'
+            op: EQUAL_TO
+            right: 'true'
+        - task_key: 02_Create_New_Batch
+          depends_on:
+            - task_key: Is_There_A_Batch_To_Process
+              outcome: 'true'
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          email_notifications: {}
+          webhook_notifications: {}
+          disabled: false
+          notebook_task:
+            notebook_path: ./formula1-project-incremental-load/06-orchestration/02.Create New Batch
+            source: WORKSPACE
+            base_parameters:
+              p_batch_id: '{{Batch.values.p_batch_id}}'
+        - task_key: run_job_formula1_lakehouse_incremental_refresh
+          depends_on:
+            - task_key: 02_Create_New_Batch
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          email_notifications: {}
+          webhook_notifications: {}
+          disabled: false
+          run_job_task:
+            job_id: ${resources.jobs.job_formula1_lakehouse_incremental_refresh.id}
+            job_parameters:
+              p_batch_id: '{{tasks.01_Identify_Next_Batch.values.p_batch_id}}'
+        - task_key: 03_Complete_Batch
+          depends_on:
+            - task_key: run_job_formula1_lakehouse_incremental_refresh
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          email_notifications: {}
+          disabled: false
+          notebook_task:
+            notebook_path: ./formula1-project-incremental-load/06-orchestration/03.Complete Batch
+            source: WORKSPACE
+            base_parameters:
+              p_batch_id: '{{tasks.01_Identify_Next_Batch.values.p_batch_id}}'
