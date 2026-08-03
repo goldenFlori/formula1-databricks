@@ -1,35 +1,24 @@
--- Fill in your principals, secret scope names, and storage credential names.
--- This file is a template only and is intentionally non-executable until customized.
+-- Rendered by restore_project.sh.
+-- Secret scopes, service principals, and storage credential secrets still need to be created outside Git.
 
--- Example principals
--- SET `engineer_group` = 'data-engineers';
--- SET `consumer_group` = 'analytics-users';
+GRANT USE CATALOG ON CATALOG __FORMULA1_CATALOG__ TO `__ENGINEER_GROUP__`;
+GRANT USE SCHEMA ON SCHEMA __FORMULA1_CATALOG__.bronze TO `__ENGINEER_GROUP__`;
+GRANT USE SCHEMA ON SCHEMA __FORMULA1_CATALOG__.silver TO `__ENGINEER_GROUP__`;
+GRANT USE SCHEMA ON SCHEMA __FORMULA1_CATALOG__.gold TO `__ENGINEER_GROUP__`;
+GRANT SELECT ON TABLE __FORMULA1_CATALOG__.gold.dim_drivers TO `__CONSUMER_GROUP__`;
+GRANT SELECT ON TABLE __FORMULA1_CATALOG__.gold.dim_constructors TO `__CONSUMER_GROUP__`;
+GRANT SELECT ON TABLE __FORMULA1_CATALOG__.gold.dim_races TO `__CONSUMER_GROUP__`;
+GRANT SELECT ON TABLE __FORMULA1_CATALOG__.gold.fact_session_results TO `__CONSUMER_GROUP__`;
+GRANT SELECT ON VIEW __FORMULA1_CATALOG__.gold.v_driver_standing TO `__CONSUMER_GROUP__`;
+GRANT SELECT ON VIEW __FORMULA1_CATALOG__.gold.v_constructor_standing TO `__CONSUMER_GROUP__`;
 
--- Example grants for the main catalog
-GRANT USE CATALOG ON CATALOG formula1 TO `<engineer_group>`;
-GRANT USE SCHEMA ON SCHEMA formula1.bronze TO `<engineer_group>`;
-GRANT USE SCHEMA ON SCHEMA formula1.silver TO `<engineer_group>`;
-GRANT USE SCHEMA ON SCHEMA formula1.gold TO `<engineer_group>`;
-GRANT SELECT ON TABLE formula1.gold.dim_drivers TO `<consumer_group>`;
-GRANT SELECT ON TABLE formula1.gold.dim_constructors TO `<consumer_group>`;
-GRANT SELECT ON TABLE formula1.gold.dim_races TO `<consumer_group>`;
-GRANT SELECT ON TABLE formula1.gold.fact_session_results TO `<consumer_group>`;
-GRANT SELECT ON VIEW formula1.gold.v_driver_standing TO `<consumer_group>`;
-GRANT SELECT ON VIEW formula1.gold.v_constructor_standing TO `<consumer_group>`;
+GRANT USE CATALOG ON CATALOG __FORMULA1_INCR_CATALOG__ TO `__ENGINEER_GROUP__`;
+GRANT USE SCHEMA ON SCHEMA __FORMULA1_INCR_CATALOG__.bronze TO `__ENGINEER_GROUP__`;
+GRANT USE SCHEMA ON SCHEMA __FORMULA1_INCR_CATALOG__.silver TO `__ENGINEER_GROUP__`;
+GRANT USE SCHEMA ON SCHEMA __FORMULA1_INCR_CATALOG__.gold TO `__ENGINEER_GROUP__`;
+GRANT USE SCHEMA ON SCHEMA __FORMULA1_INCR_CATALOG__.control TO `__ENGINEER_GROUP__`;
 
--- Example grants for the incremental catalog
-GRANT USE CATALOG ON CATALOG formula1_incr TO `<engineer_group>`;
-GRANT USE SCHEMA ON SCHEMA formula1_incr.bronze TO `<engineer_group>`;
-GRANT USE SCHEMA ON SCHEMA formula1_incr.silver TO `<engineer_group>`;
-GRANT USE SCHEMA ON SCHEMA formula1_incr.gold TO `<engineer_group>`;
-GRANT USE SCHEMA ON SCHEMA formula1_incr.control TO `<engineer_group>`;
-
--- Secret/config placeholders to document outside Git
--- Secret scope: <scope-name>
--- Secret key: <storage-key-or-app-secret>
--- Storage credential: <credential-name>
--- External locations:
---   formula1: <external-location-name>
---   formula1_incr: <external-location-name>
-
--- Jobs and dashboard permissions are applied in the workspace UI or via workspace APIs after import.
+-- Manual prerequisites that remain outside Git:
+-- * create secret scopes and populate secret values
+-- * create or rotate the storage credential identity and cloud-side IAM assignments
+-- * assign dashboard, job, and workspace object permissions that are not covered by SQL grants

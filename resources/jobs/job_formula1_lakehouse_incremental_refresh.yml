@@ -11,8 +11,6 @@ resources:
       queue:
         enabled: true
       performance_target: PERFORMANCE_OPTIMIZED
-      tags:
-        dev: florjanimema
       tasks:
         - task_key: 01_ingest_circuits_file
           run_if: ALL_SUCCESS

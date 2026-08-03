@@ -1,66 +1,61 @@
 # Formula1 workspace restore guide
 
-This repository contains the assets needed to rebuild most of the Formula1 project in a new Databricks workspace.
+This repository now supports a one-command replica flow for a new Databricks workspace.
 
-## What is already portable in this repo
+## Primary entrypoint
 
-### Notebooks and project code
-* `formula1-project/`
-* `formula1-project-incremental-load/`
-* `introduction-to-delta-lake/`
-* `introduction-to-unity-catalog/`
+Run `bash migration/restore_project.sh migration/.env` after copying `migration/.env.example` to `migration/.env` and filling in the environment-specific values.
 
-### Jobs as Declarative Automation Bundle resources
-* `resources/job_formula1_lakehouse_full_refresh.yml`
-* `resources/jobs/job_formula1_lakehouse_incremental_refresh.yml`
-* `resources/jobs/job_formula1_incremental_batch_orchestration.yml`
+## Supported restore modes
+
+### `RESTORE_MODE=backup`
+Use this when you exported managed-table backups to `BACKUP_ROOT_URL` with `migration/export_table_backups.sql` before the original workspace was shut down.
+
+The script will:
+* deploy jobs and dashboards from the bundle
+* create the target catalogs, schemas, external locations, and landing volumes
+* deep-clone tables back from the backup catalogs
+* recreate the analytics views
+* optionally apply SQL grants
+
+### `RESTORE_MODE=rebuild`
+Use this when you do not have managed-table backups but you do have the raw landing files.
+
+The script will:
+* deploy jobs and dashboards from the bundle
+* create the target catalogs, schemas, external locations, and landing volumes
+* run the full refresh job to rebuild Bronze, Silver, and Gold tables
+* recreate the analytics views
+* optionally trigger the incremental orchestration job
+
+## Files that drive the replica
+
 * `databricks.yml`
-
-### Dashboard backups
-* `dashboard_exports/Formula1 Demo Dashboard.json`
-* `dashboard_exports/Formula1 Analytics Dashboard.export.json`
-
-### Migration helpers added for rebuild
+* `resources/jobs/*.yml`
+* `resources/dashboards/formula1_dashboards.yml`
 * `migration/bootstrap_formula1.sql`
 * `migration/bootstrap_formula1_incr.sql`
+* `migration/export_table_backups.sql`
+* `migration/restore_table_backups.sql`
 * `migration/formula1_views.sql`
-* `migration/asset_inventory.md`
+* `migration/secrets_permissions_template.sql`
+* `migration/restore_project.sh`
 
-## Restore order in a new workspace
+## Manual prerequisites that still cannot be automated end to end
 
-1. Clone this repository into the new workspace.
-2. Update storage locations, external location names, and storage credential names in the bootstrap SQL files.
-3. Run `migration/bootstrap_formula1.sql` to create the `formula1` catalog, schemas, and volume.
-4. Run `migration/bootstrap_formula1_incr.sql` to create the `formula1_incr` catalog, schemas, control schema, and volume.
-5. Load the raw landing files into the volumes expected by the notebooks.
-6. Recreate jobs from the bundle YAML files and run the full refresh job first.
-7. Run the analytics notebooks in `formula1-project/05-analytics/` to recreate the standings views.
-8. If you want the incremental project too, run the incremental orchestration job after seeding its landing files.
-9. Rebuild/import dashboards using the JSON backups in `dashboard_exports/`.
+* create the cloud storage accounts, containers, and network rules
+* create or attach the storage credential identity and grant it cloud-side access
+* create secret scopes and populate secret values
+* provide a SQL warehouse and Databricks token or auth profile for the automation to use
+* preserve either the managed-table backups at `BACKUP_ROOT_URL` or the raw landing files needed for rebuild mode
+* reapply workspace-level permissions that are not expressible as SQL grants
 
-## Current table inventory captured from this workspace
+## Non-automatable items after restore
 
-### formula1
-* bronze: `circuits`, `constructors`, `drivers`, `races`, `results`, `sprints`
-* silver: `circuits`, `constructors`, `drivers`, `races`, `results`, `sprints`
-* gold managed tables: `dim_constructors`, `dim_drivers`, `dim_races`, `fact_session_results`, `ref_nationality_region`
-* gold views: `v_constructor_standing`, `v_driver_standing`
+* historical job runs and task output history
+* dashboard subscriptions, favorites, and usage history
+* personal workspace preferences and folder-level ACL decisions
 
-### formula1_incr
-* bronze: `circuits`, `constructors`, `drivers`, `races`, `results`, `sprints`
-* silver: `circuits`, `constructors`, `drivers`, `races`, `results`, `sprints`
-* gold managed tables: `dim_constructors`, `dim_drivers`, `dim_races`, `ref_nationality_region`
-* control managed tables: `batch_batch`, `batch_control`
+## Validation
 
-## What is not automatically portable
-
-These items are not fully recreated just by cloning the repo:
-* managed table data, unless you reload it from source files or export/import the data separately
-* secrets, linked accounts, storage credentials, and service principals
-* permissions and grants on catalogs, schemas, tables, jobs, and dashboards
-* job run history, dashboard subscriptions, favorites, and workspace-specific history
-* exact raw Lakeview draft JSON for the analytics dashboard; the repo contains a structured export of its datasets, SQL, pages, and widgets instead
-
-## Practical recommendation
-
-If you want the closest possible migration, keep this repo, keep a backup of the landing/source files outside the trial workspace, and recreate the environment from the bootstrap SQL plus the bundle job definitions.
+Run `bash migration/validate_replica.sh` to validate the bundle shape and ensure the automation files no longer contain hardcoded trial workspace references.

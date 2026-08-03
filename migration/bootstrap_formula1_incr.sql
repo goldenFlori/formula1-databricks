@@ -1,26 +1,24 @@
--- Update the URL, external location name, and storage credential before running.
+CREATE EXTERNAL LOCATION IF NOT EXISTS __FORMULA1_INCR_EXTERNAL_LOCATION__
+URL '__FORMULA1_INCR_STORAGE_URL__'
+WITH (STORAGE CREDENTIAL `__STORAGE_CREDENTIAL_NAME__`)
+COMMENT 'External location for the incremental Formula1 container';
 
-CREATE EXTERNAL LOCATION IF NOT EXISTS databricks_course_ext_dl999_formula1_incr
-URL 'abfss://formula1-incr@databrickscoursedlflori.dfs.core.windows.net'
-WITH (STORAGE CREDENTIAL `databricks-course-sc`)
-COMMENT 'External location for the formula1-incr container';
+CREATE CATALOG IF NOT EXISTS __FORMULA1_INCR_CATALOG__
+MANAGED LOCATION '__FORMULA1_INCR_STORAGE_URL__'
+COMMENT 'Incremental catalog for the Formula1 project';
 
-CREATE CATALOG IF NOT EXISTS formula1_incr
-MANAGED LOCATION 'abfss://formula1-incr@databrickscoursedlflori.dfs.core.windows.net'
-COMMENT 'Main catalog for the incremental formula1 project';
+CREATE SCHEMA IF NOT EXISTS __FORMULA1_INCR_CATALOG__.landing;
 
-CREATE SCHEMA IF NOT EXISTS formula1_incr.landing;
+CREATE SCHEMA IF NOT EXISTS __FORMULA1_INCR_CATALOG__.bronze
+MANAGED LOCATION '__FORMULA1_INCR_STORAGE_URL__/bronze';
 
-CREATE SCHEMA IF NOT EXISTS formula1_incr.bronze
-MANAGED LOCATION 'abfss://formula1-incr@databrickscoursedlflori.dfs.core.windows.net/bronze';
+CREATE SCHEMA IF NOT EXISTS __FORMULA1_INCR_CATALOG__.silver
+MANAGED LOCATION '__FORMULA1_INCR_STORAGE_URL__/silver';
 
-CREATE SCHEMA IF NOT EXISTS formula1_incr.silver
-MANAGED LOCATION 'abfss://formula1-incr@databrickscoursedlflori.dfs.core.windows.net/silver';
+CREATE SCHEMA IF NOT EXISTS __FORMULA1_INCR_CATALOG__.gold
+MANAGED LOCATION '__FORMULA1_INCR_STORAGE_URL__/gold';
 
-CREATE SCHEMA IF NOT EXISTS formula1_incr.gold
-MANAGED LOCATION 'abfss://formula1-incr@databrickscoursedlflori.dfs.core.windows.net/gold';
+CREATE SCHEMA IF NOT EXISTS __FORMULA1_INCR_CATALOG__.control;
 
-CREATE SCHEMA IF NOT EXISTS formula1_incr.control;
-
-CREATE EXTERNAL VOLUME IF NOT EXISTS formula1_incr.landing.files
-LOCATION 'abfss://formula1-incr@databrickscoursedlflori.dfs.core.windows.net/landing';
+CREATE EXTERNAL VOLUME IF NOT EXISTS __FORMULA1_INCR_CATALOG__.landing.__LANDING_VOLUME_NAME__
+LOCATION '__FORMULA1_INCR_STORAGE_URL__/landing';

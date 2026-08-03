@@ -1,0 +1,17 @@
+resources:
+  dashboards:
+    formula1_demo_dashboard:
+      display_name: Formula1 Demo Dashboard
+      file_path: ../../Formula1 Demo Dashboard.lvdash.json
+      warehouse_id: ${var.warehouse_id}
+      embed_credentials: false
+      dataset_catalog: ${var.formula1_catalog}
+      dataset_schema: ${var.formula1_gold_schema}
+
+    formula1_analytics_dashboard:
+      display_name: Formula1 Analytics Dashboard
+      file_path: ../../Formula1 Analytics Dashboard.lvdash.json
+      warehouse_id: ${var.warehouse_id}
+      embed_credentials: false
+      dataset_catalog: ${var.formula1_catalog}
+      dataset_schema: ${var.formula1_gold_schema}

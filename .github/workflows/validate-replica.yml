@@ -1,0 +1,25 @@
+name: validate-replica
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: databricks/setup-cli@main
+
+      - name: Validate one-click replica automation
+        env:
+          DATABRICKS_HOST: https://example.cloud.databricks.com
+          DATABRICKS_TOKEN: dapiPLACEHOLDER
+        run: |
+          chmod +x migration/restore_project.sh migration/validate_replica.sh
+          ./migration/validate_replica.sh

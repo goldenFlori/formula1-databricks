@@ -3,10 +3,31 @@ bundle:
 
 include:
   - resources/jobs/*.yml
+  - resources/dashboards/*.yml
+
+sync:
+  exclude:
+    - "*.lvdash.json"
+
+variables:
+  warehouse_id:
+    description: SQL warehouse id used for dashboard deployment and SQL bootstrap execution
+  formula1_catalog:
+    description: Primary Formula1 catalog name
+    default: formula1
+  formula1_incr_catalog:
+    description: Incremental Formula1 catalog name
+    default: formula1_incr
+  formula1_gold_schema:
+    description: Gold schema used by the main dashboard datasets
+    default: gold
+  formula1_incr_gold_schema:
+    description: Gold schema used by incremental datasets
+    default: gold
 
 targets:
   dev:
     default: true
     mode: development
-    workspace:
-      host: https://adb-7405615009528396.16.azuredatabricks.net
+  prod:
+    mode: production

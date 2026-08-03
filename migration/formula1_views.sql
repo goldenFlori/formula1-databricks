@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW formula1.gold.v_driver_standing AS
+CREATE OR REPLACE VIEW __FORMULA1_CATALOG__.gold.v_driver_standing AS
 WITH driven_session_summary AS (
     SELECT
         r.season,
@@ -9,8 +9,8 @@ WITH driven_session_summary AS (
         SUM(r.points) AS total_points,
         COUNT_IF(r.is_win) AS number_of_wins,
         COUNT_IF(r.is_podium) AS number_of_podiums
-    FROM formula1.gold.fact_session_results r
-    JOIN formula1.gold.dim_drivers d
+    FROM __FORMULA1_CATALOG__.gold.fact_session_results r
+    JOIN __FORMULA1_CATALOG__.gold.dim_drivers d
       ON r.driver_id = d.driver_id
     WHERE r.season IS NOT NULL
     GROUP BY r.season, d.driver_id, d.driver_name, d.nationality
@@ -27,7 +27,7 @@ SELECT
     number_of_podiums
 FROM driven_session_summary;
 
-CREATE OR REPLACE VIEW formula1.gold.v_constructor_standing AS
+CREATE OR REPLACE VIEW __FORMULA1_CATALOG__.gold.v_constructor_standing AS
 WITH constructor_session_summary AS (
     SELECT
         r.season,
@@ -38,8 +38,8 @@ WITH constructor_session_summary AS (
         SUM(r.points) AS total_points,
         COUNT_IF(r.is_win) AS number_of_wins,
         COUNT_IF(r.is_podium) AS number_of_podiums
-    FROM formula1.gold.fact_session_results r
-    JOIN formula1.gold.dim_constructors c
+    FROM __FORMULA1_CATALOG__.gold.fact_session_results r
+    JOIN __FORMULA1_CATALOG__.gold.dim_constructors c
       ON r.constructor_id = c.constructor_id
     WHERE r.season IS NOT NULL
     GROUP BY r.season, c.constructor_id, c.constructor_name, c.nationality

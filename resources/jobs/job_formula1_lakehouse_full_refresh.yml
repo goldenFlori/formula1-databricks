@@ -5,108 +5,99 @@ resources:
       max_concurrent_runs: 1
       queue:
         enabled: true
-
-      # NOTE: No `job_clusters` block and no `job_cluster_key` on any task.
-      # When a notebook task specifies no compute, the job runs it on
-      # Serverless compute. This avoids launching a VM in your subscription,
-      # so it sidesteps the CLOUD_PROVIDER_RESOURCE_STOCKOUT / quota error.
-
       tasks:
-        # ---------- Bronze: Ingest ----------
         - task_key: 01_ingest_circuits_file
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/02-bronze/01.Ingest Circuits File
+            notebook_path: ./formula1-project/02-bronze/01.Ingest Circuits File
             source: WORKSPACE
 
         - task_key: 02_ingest_races_file
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/02-bronze/02.Ingest Races File
+            notebook_path: ./formula1-project/02-bronze/02.Ingest Races File
             source: WORKSPACE
 
         - task_key: 03_ingest_constructors_file
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/02-bronze/03.Ingest Constructors File
+            notebook_path: ./formula1-project/02-bronze/03.Ingest Constructors File
             source: WORKSPACE
 
         - task_key: 04_ingest_drivers_file
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/02-bronze/04.Ingest Drivers File
+            notebook_path: ./formula1-project/02-bronze/04.Ingest Drivers File
             source: WORKSPACE
 
         - task_key: 05_ingest_results_file
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/02-bronze/05.Ingest Results File
+            notebook_path: ./formula1-project/02-bronze/05.Ingest Results File
             source: WORKSPACE
 
         - task_key: 06_ingest_sprints_file
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/02-bronze/06.Ingest Sprints File
+            notebook_path: ./formula1-project/02-bronze/06.Ingest Sprints File
             source: WORKSPACE
 
-        # ---------- Silver: Transform ----------
         - task_key: 01_transform_circuits_data
           depends_on:
             - task_key: 01_ingest_circuits_file
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/03-silver/01.Transform Circuits Data
+            notebook_path: ./formula1-project/03-silver/01.Transform Circuits Data
             source: WORKSPACE
 
         - task_key: 02_transform_races_data
           depends_on:
             - task_key: 02_ingest_races_file
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/03-silver/02.Transform Races Data
+            notebook_path: ./formula1-project/03-silver/02.Transform Races Data
             source: WORKSPACE
 
         - task_key: 03_transform_constructors_data
           depends_on:
             - task_key: 03_ingest_constructors_file
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/03-silver/03.Transform Constructors Data
+            notebook_path: ./formula1-project/03-silver/03.Transform Constructors Data
             source: WORKSPACE
 
         - task_key: 04_transform_drivers_data
           depends_on:
             - task_key: 04_ingest_drivers_file
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/03-silver/04.Transform Drivers Data
+            notebook_path: ./formula1-project/03-silver/04.Transform Drivers Data
             source: WORKSPACE
 
         - task_key: 05_transform_results_data
           depends_on:
             - task_key: 05_ingest_results_file
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/03-silver/05.Transform Results Data
+            notebook_path: ./formula1-project/03-silver/05.Transform Results Data
             source: WORKSPACE
 
         - task_key: 06_transform_sprints_data
           depends_on:
             - task_key: 06_ingest_sprints_file
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/03-silver/06.Transform Sprints Data
+            notebook_path: ./formula1-project/03-silver/06.Transform Sprints Data
             source: WORKSPACE
 
-        # ---------- Gold: Build ----------
         - task_key: 01_Build_Races_Dimension
           depends_on:
             - task_key: 01_transform_circuits_data
             - task_key: 02_transform_races_data
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/04-gold/01.Build Races Dimension
+            notebook_path: ./formula1-project/04-gold/01.Build Races Dimension
             source: WORKSPACE
 
         - task_key: 02_Build_Constructors_Dimension
           depends_on:
             - task_key: 03_transform_constructors_data
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/04-gold/02.Build Constructors Dimension
+            notebook_path: ./formula1-project/04-gold/02.Build Constructors Dimension
             source: WORKSPACE
 
         - task_key: 03_Build_Drivers_Dimension
           depends_on:
             - task_key: 04_transform_drivers_data
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/04-gold/03.Build Drivers Dimension
+            notebook_path: ./formula1-project/04-gold/03.Build Drivers Dimension
             source: WORKSPACE
 
         - task_key: 04_Build_Results_Fact
@@ -114,10 +105,10 @@ resources:
             - task_key: 05_transform_results_data
             - task_key: 06_transform_sprints_data
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/04-gold/04.Build Results Fact
+            notebook_path: ./formula1-project/04-gold/04.Build Results Fact
             source: WORKSPACE
 
         - task_key: 91_Build_Nationality_Region_Reference
           notebook_task:
-            notebook_path: /Workspace/Users/florjanimema@gmail.com/formula1-databricks/formula1-project/04-gold/91.Build Nationality Region Reference
+            notebook_path: ./formula1-project/04-gold/91.Build Nationality Region Reference
             source: WORKSPACE
